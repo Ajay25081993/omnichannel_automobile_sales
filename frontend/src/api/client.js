@@ -1,12 +1,30 @@
 const base =
   import.meta.env.VITE_API_URL?.replace(/\/$/, '') || ''
 
+export function getAuthToken() {
+  return localStorage.getItem('authToken')
+}
+
+export function setAuthToken(token) {
+  if (token) {
+    localStorage.setItem('authToken', token)
+  } else {
+    localStorage.removeItem('authToken')
+  }
+}
+
 async function request(path, options = {}) {
   const url = `${base}${path.startsWith('/') ? path : `/${path}`}`
   const headers = {
     'Content-Type': 'application/json',
     ...options.headers,
   }
+
+  const token = getAuthToken()
+  if (token) {
+    headers.Authorization = `Bearer ${token}`
+  }
+
   const res = await fetch(url, { ...options, headers })
   const text = await res.text()
   let data = null
