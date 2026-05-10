@@ -3,12 +3,13 @@ import { useAuth } from '../contexts/AuthContext'
 
 export default function AppLayout() {
   const navigate = useNavigate()
-  const { user, isAuthenticated, isCustomer, isDealer, isFinancialInstitution, logout } = useAuth()
+  const { user, isAuthenticated, isCustomer, isDealer, isFinancialInstitution, isAdmin, logout } = useAuth()
 
   const links = [
     { to: '/', label: 'Home', end: true, roles: ['all'] },
     { to: '/inventory', label: 'Browse Vehicles', roles: ['all'] },
     { to: '/dealer-dashboard', label: 'My Inventory', roles: ['dealer'] },
+    { to: '/admin-dashboard', label: 'Admin Dashboard', roles: ['admin'] },
     { to: '/bookings', label: 'My Bookings', roles: ['customer', 'dealer'] },
     { to: '/test-drives', label: 'Test Drives', roles: ['customer', 'dealer'] },
     { to: '/loans', label: 'Loan Applications', roles: ['customer', 'financial_institution'] },
@@ -21,6 +22,7 @@ export default function AppLayout() {
       if (role === 'customer') return isCustomer
       if (role === 'dealer') return isDealer
       if (role === 'financial_institution') return isFinancialInstitution
+      if (role === 'admin') return isAdmin
       return false
     })
   })
@@ -36,7 +38,7 @@ export default function AppLayout() {
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4 md:px-6">
           <div>
             <p className="text-xs font-medium uppercase tracking-wider text-brand-600">
-              {isDealer ? 'Dealer Platform' : isFinancialInstitution ? 'Financial Portal' : 'Customer Portal'}
+              {isAdmin ? 'Admin Platform' : isDealer ? 'Dealer Platform' : isFinancialInstitution ? 'Financial Portal' : 'Customer Portal'}
             </p>
             <h1 className="font-semibold text-slate-900">
               Omnichannel Auto Sales

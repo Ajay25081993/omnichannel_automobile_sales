@@ -10,6 +10,7 @@ import TestDrivesPage from './pages/TestDrivesPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import RegisterPage from './pages/RegisterPage.jsx'
 import DealerDashboardPage from './pages/DealerDashboardPage.jsx'
+import AdminDashboardPage from './pages/AdminDashboardPage.jsx'
 
 export default function App() {
   return (
@@ -32,6 +33,14 @@ export default function App() {
               element={
                 <ProtectedRoute roles={['dealer']}>
                   <DealerDashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="admin-dashboard"
+              element={
+                <ProtectedRoute roles={['admin']}>
+                  <AdminDashboardPage />
                 </ProtectedRoute>
               }
             />

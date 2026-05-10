@@ -130,6 +130,7 @@ export default function RegisterPage() {
                 <option value="customer">Customer</option>
                 <option value="dealer">Dealer</option>
                 <option value="financial_institution">Financial Institution</option>
+                <option value="admin">Admin</option>
               </select>
             </div>
             {formData.role === 'dealer' && (

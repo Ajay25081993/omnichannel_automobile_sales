@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema(
     phone: { type: String, trim: true },
     role: {
       type: String,
-      enum: ['customer', 'dealer', 'financial_institution'],
+      enum: ['customer', 'dealer', 'financial_institution', 'admin'],
       default: 'customer',
     },
     dealerCode: { type: String, trim: true },

@@ -7,6 +7,8 @@ import { bookingRouter } from './routes/bookingRoutes.js'
 import { loanRouter } from './routes/loanRoutes.js'
 import { testDriveRouter } from './routes/testDriveRoutes.js'
 import { recommendationRouter } from './routes/recommendationRoutes.js'
+import { adminRouter } from './routes/adminRoutes.js'
+import { customerVehicleRouter } from './routes/customerVehicleRoutes.js'
 import { errorHandler } from './middleware/errorHandler.js'
 
 export function createApp() {
@@ -25,6 +27,8 @@ export function createApp() {
   app.use('/api/loans', loanRouter)
   app.use('/api/test-drives', testDriveRouter)
   app.use('/api/recommendations', recommendationRouter)
+  app.use('/api/admin', adminRouter)
+  app.use('/api/customer-vehicles', customerVehicleRouter)
 
   app.use(errorHandler)
   return app
