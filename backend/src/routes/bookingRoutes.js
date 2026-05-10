@@ -3,8 +3,32 @@ import mongoose from 'mongoose'
 import { Booking } from '../models/Booking.js'
 import { Vehicle } from '../models/Vehicle.js'
 import { authenticate, authorize } from '../middleware/auth.js'
+import { createAuditLog } from '../middleware/auditLogger.js'
 
 export const bookingRouter = Router()
+
+// Real-time availability check
+bookingRouter.get('/availability/:vehicleId', async (req, res, next) => {
+  try {
+    const vehicle = await Vehicle.findById(req.params.vehicleId).lean()
+
+    if (!vehicle) {
+      return res.status(404).json({ error: 'Vehicle not found' })
+    }
+
+    const isAvailable = vehicle.status === 'available' && vehicle.stockQuantity > 0
+
+    res.json({
+      vehicleId: vehicle._id,
+      isAvailable,
+      stockQuantity: vehicle.stockQuantity,
+      status: vehicle.status,
+      currentPrice: vehicle.currentPrice,
+    })
+  } catch (err) {
+    next(err)
+  }
+})
 
 bookingRouter.get('/', authenticate, async (req, res, next) => {
   try {
@@ -72,6 +96,16 @@ bookingRouter.post('/', authenticate, authorize('customer'), async (req, res, ne
 
     await session.commitTransaction()
 
+    await createAuditLog(
+      req.user._id,
+      req.user.name,
+      req.user.role,
+      'create_booking',
+      'booking',
+      booking._id.toString(),
+      { vehicleId: vehicle._id.toString(), price: vehicle.currentPrice },
+    )
+
     const populatedBooking = await Booking.findById(booking._id)
       .populate('vehicleId', 'make model year vin currentPrice')
       .lean()
@@ -108,6 +142,16 @@ bookingRouter.patch('/:id', authenticate, async (req, res, next) => {
       Object.assign(booking, req.body)
       await booking.save()
     }
+
+    await createAuditLog(
+      req.user._id,
+      req.user.name,
+      req.user.role,
+      'update_booking',
+      'booking',
+      booking._id.toString(),
+      req.body,
+    )
 
     const updatedBooking = await Booking.findById(booking._id)
       .populate('vehicleId', 'make model year vin currentPrice')
